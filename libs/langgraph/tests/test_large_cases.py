@@ -11,8 +11,8 @@ from pytest_mock import MockerFixture
 from syrupy import SnapshotAssertion
 from typing_extensions import TypedDict
 
+from langgraph.channels.ephemeral_value import EphemeralValue
 from langgraph.channels.last_value import LastValue
-from langgraph.channels.untracked_value import UntrackedValue
 from langgraph.checkpoint.base import BaseCheckpointSaver
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.constants import END, PULL, PUSH, START
@@ -1299,7 +1299,7 @@ def test_conditional_state_graph(
     from langchain_core.tools import tool
 
     class AgentState(TypedDict, total=False):
-        input: Annotated[str, UntrackedValue]
+        input: Annotated[str, EphemeralValue]
         agent_outcome: Optional[Union[AgentAction, AgentFinish]]
         intermediate_steps: Annotated[list[tuple[AgentAction, str]], operator.add]
 
@@ -2496,9 +2496,9 @@ def test_state_graph_packets(
 
     # Define decision-making logic
     def should_continue(data: dict) -> str:
-        assert data["something_extra"] == "hi there", (
-            "nodes can pass extra data to their cond edges, which isn't saved in state"
-        )
+        assert (
+            data["something_extra"] == "hi there"
+        ), "nodes can pass extra data to their cond edges, which isn't saved in state"
         # Logic to decide whether to continue in the loop or exit
         if tool_calls := data["messages"][-1].tool_calls:
             return [Send("tools", tool_call) for tool_call in tool_calls]
