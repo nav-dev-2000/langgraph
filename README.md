@@ -18,7 +18,7 @@ Trusted by companies shaping the future of agents – including Klarna, Replit, 
 
 ## Get started
 
-Install LangGraph:
+Install LangGraph
 
 ```
 pip install -U langgraph
